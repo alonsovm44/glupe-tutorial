@@ -12,3 +12,6 @@ glupe hello.glp -o hello -cpp [ -cloud | -local ]
 ```
 
 You can also read the tutorial glupe file with a briefing on the lang.
+
+## Note
+Glupe syntax highlight extension is available in releases section --->
