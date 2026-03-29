@@ -1,0 +1,7 @@
+$$ABSTRACT policy {
+    all printed characters must end with "!"
+}$$
+
+$$ main {
+    print "hello from glupe"
+}$$

@@ -1,0 +1,148 @@
+% WELCOME TO THE GLUPE INTENT ALGEBRA TUTORIAL!
+% In Glupe, prompts are first-class data types. You are manipulating 
+% Semantic Nodes using operators to calculate a Final State of Intent.
+
+% ---------------------------------------------------------
+% 1. SEMANTIC STATE (Variables & Constants)
+% ---------------------------------------------------------
+
+% Ephemeral Variable ($:)
+% Uncached. The AI re-evaluates this logic on every single build.
+% Great for dynamic environment logic that changes often.
+$: dynamic_greeting -> "Hello, transient world!"
+
+% Persistent Variable ($$:)
+% Cached in .glupe.lock. The AI generates the code once and saves it.
+% Best for complex logic to save LLM tokens and compilation time.
+$$: cached_greeting -> "Hello, permanent world!"
+
+% Semantic Constant ($CONST:)
+% Generates immutable binary constraints (e.g., `const int` in C++).
+$CONST: MAX_RETRIES -> 3
+
+% Abstract Variable ($ABSTRACT:)
+% The "Logic Ghost". This shapes how the AI writes the code, but it generates
+% ZERO physical memory/bytes in the final binary executable.
+$ABSTRACT: ARCHITECTURE_STYLE -> "Use high-performance asynchronous execution"
+
+% ---------------------------------------------------------
+% 2. STRUCTURAL LOGIC (Containers & Inheritance)
+% ---------------------------------------------------------
+
+% Abstract Persistent Block ($$ABSTRACT)
+% Defines architectural rules or blueprints. Produces NO code itself, 
+% but acts as a rulebook for other blocks.
+$$ABSTRACT safety_policy {
+    1. Never log user passwords.
+    2. Always validate array bounds before access.
+}$$
+
+% Inline abstract block ($ABSTRACT)
+% works exactly like a the multiline block above, but it spans only one line.
+$ABSTRACT inline_block { 0. ensure there are no memory leaks or raw pointers} $
+
+% Persistent Block ($$) with Inheritance (->)
+% We use `->` to inherit the rules from `safety_policy`. The compiler merges
+% these intents algebraically before sending them to the LLM.
+$$ process_data -> safety_policy {
+    Create an array of 5 integers.
+    Safely assign the number 42 to the 10th index.
+}$$
+
+% Inline persistant block $()
+% Works like a multiline block above, but it spans only one line.
+
+$ inline_persistant_block {} $
+
+% Context Injection / Functions ()
+% You can pass dependencies directly into a block. The AI will translate
+% this into a native function accepting parameters.
+$$ print_custom_greeting(dynamic_greeting) {
+    Output the provided greeting to the standard console.
+}$$
+
+% ---------------------------------------------------------
+% 3. PROMPT ARITHMETIC (Intent Algebra)
+% ---------------------------------------------------------
+% Glupe allows you to treat prompts as algebraic variables to calculate
+% deterministic states of intent before the AI even starts generating.
+
+% Let's define some base logic vectors
+$: base_task -> "Write a function that reads a file."
+$: add_logging -> "Log every read operation."
+$: remove_sys -> "Do not use standard system libraries."
+
+% Addition (+): Concatenates semantic intents.
+% If intents directly contradict, Glupe throws a Compile-Time Error!
+$: task_with_logging -> base_task + add_logging
+
+% Subtraction (-): Subset removal or negative prompting (Inhibitor).
+% If the subtrahend is not in the base, it explicitly forbids it.
+$: strict_task -> base_task - remove_sys
+
+% Multiplication (*): Iterative execution or mapping (Horizontal Scaling).
+% Maps an action over an iterator or repeats it a scalar number of times.
+$: repeated_task -> "Print 'Hello'" * "3"
+$: mapped_task -> "Format as JSON" * "Every row in the database"
+
+% Division (/): Semantic inversion or conditional undo.
+% 1 / x represents the logical opposite of x (e.g., "Do not log").
+$: inverse_logging -> "1" / add_logging
+
+% Exponentiation (^): Recursive composition (Vertical Refinement).
+% Feeds the output of the logic back into itself n times.
+$: refined_task -> "Critique and optimize the code" ^ "3"
+
+% ---------------------------------------------------------
+% 4. FUNDAMENTAL STATES (Null & Identity)
+% ---------------------------------------------------------
+% The Null State ("0"): Represents the complete absence of instruction.
+% It is the Additive Identity. If an equation resolves to 0, it acts as a Halt command.
+$: unchanged_task -> base_task + "0"
+
+% The Identity Element ("1"): Represents pure preservation or verbatim execution.
+% It is the Multiplicative Identity. Multiplying by 1 keeps the logic exactly as is.
+$: verbatim_task -> base_task * "1"
+
+% CALLING VARIABLES IN BLOCKS/CONTAINERS
+% variables passed to semantic blocks are called using $ perfix, e.g; $var
+$$ complex_generator(task_with_logging, refined_task) {
+    Evaluate the following calculated intent:
+    $task_with_logging - "Use async IO" + $refined_task
+}$$
+
+% ---------------------------------------------------------
+% 5. MULTIPLE INHERITANCE
+% ---------------------------------------------------------
+% A container can inherit from multiple abstract blueprints simultaneously.
+% This allows for "Architectural Mixins".
+$$ABSTRACT logging_policy { Log every major action to standard output. }$$
+
+$$ process_secure_data -> safety_policy, logging_policy {
+    Safely process the data.
+}$$
+
+% ---------------------------------------------------------
+% 6. MULTI-FILE PROJECTS & DIRECTIVES
+% ---------------------------------------------------------
+% Glupe can act as an Architect and generate entire multi-file projects. 
+% Use EXPORT directives to specify native files. Glupe automatically infers
+% the target language from the file extension (e.g., .py = Python, .cpp = C++).
+% code outside the semantic blocks but inside the export block is copied verbatim.
+
+EXPORT: "main.py"
+import math
+$$ python_main {
+    Import the math module and print the square root of 25.
+}$$
+EXPORT: END
+
+% ---------------------------------------------------------
+% 7. GLUPEHUB METADATA & MULTILINE COMMENTS
+% ---------------------------------------------------------
+%{ 
+    This is a multiline comment block!
+    Below is a Metadata block. When you run `glupe push`, this JSON-like
+    structure is read to properly tag and version your module on GlupeHub.
+}%
+META_START { "name": "tutorial", "version": "1.0.0", "author": "alonsovm" } META_END
